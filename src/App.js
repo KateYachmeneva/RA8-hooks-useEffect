@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import {useState,useEffect} from 'react';
 import './App.css'
 import Lists from "./components/Lists/Lists";
 import Details from "./components/Details/Details";
@@ -6,44 +6,35 @@ import Loader from "./components/Loader/Loader";
 
 function App() {
   const [lists, setLists] = useState([]);
-  const [userID, setUserID] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
   const [loader, setLoader] = useState(false);
-  const [error, setError] = useState(false);
+  const [currentUser,setCurrentUser] = useState(null);
+ 
 
-  useEffect(() => {
-    fetch(process.env.REACT_APP_BASE_URL + 'users.json')
-       .then(response => response.json())
-       .then(data => setLists(prevState =>[...prevState, ...data]))
-       .catch (error => setError(error.message));
-  },[]);
-  useEffect(() => {
-    if (!userID) {
-      return;
-    }
+useEffect(() => {
     setLoader(true);
-    fetch(`${process.env.REACT_APP_BASE_URL}${userID}.json`)
-    .then(response => response.json())
-    .then(data => {
-      setUserInfo(prevState => ({...prevState, ...data}))
+    fetch(process.env.REACT_APP_BASE_URL + 'users.json')
+    .then((response) => response.json())
+    .then((data) => setLists((prevState) => [...prevState, ...data]))
+    .then(() => {
       setLoader(false);
-    })
-    .catch(error => setError(error.message));
-}, [userID]);
-
-const getIdHandler = (id) => {
-  setUserID(id)
-}
+    });
+}, []);
+console.log(lists);
+const getIdHandler = (id,name) => {
+  const user = {name: name, id: id};
+  console.log(user.id);
+  setCurrentUser(user);
+};
+console.log(currentUser);
   return (
-    <div className="container pt-5">
-      <div className="row">
-        <div className="col-4">
-        {error && <p>Ошибка {error}</p>}
-          {!error && <Lists lists={lists} getId={getIdHandler}/>}
+      <div className="container pt-5">
+        <div className="row">
+          <div className="col-4">
+                  {<Lists lists={lists} getId={getIdHandler}/>}
         </div>
         <div className="col-8">
-          {loader && <Loader/>}
-          {userInfo && <Details userInfo={userInfo}/>}
+               {!Loader && <Loader/>}
+               {currentUser && <Details {...currentUser}/> }
         </div>
       </div>
     </div>

@@ -6,8 +6,7 @@ const ListItem = ({id,name,getId}) => {
     return (
         <li className="list-group-item"
         style = {{cursor: "pointer"}}
-        onClick = {() => getId(id)}
-        >
+        onClick = {() => getId(id,name)}>
             {name}
             </li>
     )
