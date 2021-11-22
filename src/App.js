@@ -3,6 +3,7 @@ import './App.css'
 import Lists from "./components/Lists/Lists";
 import Details from "./components/Details/Details";
 import Loader from "./components/Loader/Loader";
+import createRequest from './api/createRequest';
 
 function App() {
   const [lists, setLists] = useState([]);
@@ -12,20 +13,17 @@ function App() {
 
 useEffect(() => {
     setLoader(true);
-    fetch(process.env.REACT_APP_BASE_URL + 'users.json')
-    .then((response) => response.json())
-    .then((data) => setLists((prevState) => [...prevState, ...data]))
-    .then(() => {
-      setLoader(false);
-    });
+    createRequest('users.json')()
+    .then((data) => setLists(data))
+         setLoader(false);
+    
 }, []);
-console.log(lists);
+
 const getIdHandler = (id,name) => {
   const user = {name: name, id: id};
   console.log(user.id);
   setCurrentUser(user);
 };
-console.log(currentUser);
   return (
       <div className="container pt-5">
         <div className="row">
@@ -34,7 +32,7 @@ console.log(currentUser);
         </div>
         <div className="col-8">
                {!Loader && <Loader/>}
-               {currentUser && <Details {...currentUser}/> }
+               {currentUser && <Details {...currentUser}/>}
         </div>
       </div>
     </div>
